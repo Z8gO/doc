@@ -32,8 +32,15 @@ Nacos 使用：
 1、自己注册的服务启动后：在 服务管理—服务列表中可查看自己的服务。  
 2、在 配置管理—配置列表中进行配置文件的设置。（右边的 + 号为新增配置文件）
 
+
+    Data ID 格式为：
+        ${prefix}-${spring.profile.active}.${file-extension}  
+    不标注环境类型则不会拼接
+    如：
 	创建nacos-hello服务的properties类型的配置文件，  
-	Data ID 必须是 nacos-hello.properties
+	Data ID 默认是 nacos-hello.properties  
+	生产：nacos-hello-prod.properties  
+	开发：nacos-hello-dev.properties
 	配置内容按照对应的需要的配置项进行配置。
 
 
