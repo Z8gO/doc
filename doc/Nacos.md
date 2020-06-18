@@ -37,7 +37,7 @@ Spring Cloud 集成：
       spring.cloud.nacos.config.namespace= ec246752-fdc5-4203-9e25-736b38af2458
       #在没有明确指定 ${spring.cloud.nacos.config.group} 配置的情况下， 默认使用的是 DEFAULT_GROUP
       spring.cloud.nacos.config.group=TEST_GROUP
-      
+       
       #################
       ##服务注册发现配置
       ##配置项参考https://github.com/alibaba/spring-cloud-alibaba/wiki/Nacos-discovery
