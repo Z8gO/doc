@@ -2,14 +2,49 @@
 <project version="4">
   <component name="RemoteRepositoriesConfiguration">
     <remote-repository>
+      <option name="id" value="dcits-public" />
+      <option name="name" value="dcits-public" />
+      <option name="url" value="http://123.139.43.244:9081/nexus/content/repositories/public/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="dcits-thirdparty" />
+      <option name="name" value="dcits-thirdparty" />
+      <option name="url" value="http://123.139.43.244:9081/nexus/content/repositories/thirdparty/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="central" />
+      <option name="name" value="Central Repository" />
+      <option name="url" value="https://repo.maven.apache.org/maven2" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="central" />
       <option name="name" value="Maven Central repository" />
       <option name="url" value="https://repo1.maven.org/maven2" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="dcits-central" />
+      <option name="name" value="dcits-central" />
+      <option name="url" value="http://123.139.43.244:9081/nexus/content/repositories/central/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="poc-snapshots" />
+      <option name="name" value="poc-snapshots" />
+      <option name="url" value="http://123.139.43.244:9081/nexus/content/repositories/poc-snapshot/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="dcits-snapshots" />
+      <option name="name" value="dcits-snapshots" />
+      <option name="url" value="http://123.139.43.244:9081/nexus/content/groups/public-snapshots/" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="central" />
       <option name="name" value="Central Repository" />
       <option name="url" value="http://maven.aliyun.com/nexus/content/groups/public" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="dcits-releases" />
+      <option name="name" value="dcits-releases" />
+      <option name="url" value="http://123.139.43.244:9081/nexus/content/groups/public/" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="jboss.community" />
