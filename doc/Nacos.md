@@ -22,8 +22,32 @@ Spring Cloud 集成：
 1、注意pom中增加jar依赖  
 2、配置文件bootstrap.prpperties：  
 
-      spring.cloud.nacos.discovery.server-addr=127.0.0.1:8848  
-      spring.cloud.nacos.config.server-addr=127.0.0.1:8848
+      spring.application.name=nacos-hello
+      server.port=5001
+      
+      #################
+      ##配置管理配置
+      ##配置项参考：https://github.com/alibaba/spring-cloud-alibaba/wiki/Nacos-config
+      #################
+      #通过设置 spring.cloud.nacos.config.enabled = false 来完全关闭 Spring Cloud Nacos Config
+      spring.cloud.nacos.config.enabled = true 
+      # 注意端口不能省略
+      spring.cloud.nacos.config.server-addr= 127.0.0.1:80
+      #namespace 对应的 id，id 值可以在 Nacos 的控制台获取。
+      spring.cloud.nacos.config.namespace= ec246752-fdc5-4203-9e25-736b38af2458
+      #在没有明确指定 ${spring.cloud.nacos.config.group} 配置的情况下， 默认使用的是 DEFAULT_GROUP
+      spring.cloud.nacos.config.group=TEST_GROUP
+      
+      #################
+      ##服务注册发现配置
+      ##配置项参考https://github.com/alibaba/spring-cloud-alibaba/wiki/Nacos-discovery
+      #################
+      spring.cloud.nacos.discovery= true 
+      spring.cloud.nacos.discovery.server-addr= 127.0.0.1:80
+      #设置服务所处的分组
+      spring.cloud.nacos.discovery.group= TEST_GROUP
+      spring.cloud.nacos.discovery.namespace= ec246752-fdc5-4203-9e25-736b38af2458
+
 
 
 
