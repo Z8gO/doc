@@ -40,7 +40,7 @@ github:  https://github.com/kswapd/spring-cloud-arch.git
        eureka.client.service-url.defaultZone=http://ip1:port1/eureka/,http://ip2:port2/eureka/
        若需要配置多个注册中心，可以以上面的方式配置。以“,” 分隔
 
-######启动一个服务注册中心的方式很简单，就是在Spring Boot的入口类上添加一个@EnableEurekaServer注解
+######启动一个服务注册中心，在Spring Boot的入口类上添加一个@EnableEurekaServer注解
     @SpringBootApplication
     @EnableEurekaServer
     public class Application {
@@ -160,8 +160,9 @@ eureka.client.service-url.defaultZone=http://peer1:1111/eureka/
 说明：peer1、peer2是指机器可识别的机器别名或者IP地址。若需要使用别名，需要在hosts文件中指定，<font color='red'>通过配置文件中的最后一项配置可以看出，各个注册中心可以通过互相注册来达到服务信息共享的目的。</font>
 
 <br/>
+
 >启动时使用下面命令，来启动多个注册中心。  
-java -jar eureka-server-0.0.1-SNAPSHOT.jar --spring.profiles.active=peer1  
+java -jar eureka-server-0.0.1-SNAPSHOT.jar --spring.profiles.active=peer1     
 java -jar eureka-server-0.0.1-SNAPSHOT.jar --spring.profiles.active=peer2
 
 
