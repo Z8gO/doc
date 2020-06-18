@@ -51,6 +51,7 @@ github:  https://github.com/kswapd/spring-cloud-arch.git
 
 
 <div STYLE="page-break-after: always;"></div>
+
 ####Eureka Client
 ***
 
@@ -212,6 +213,7 @@ Eureka Server在运行期间会去统计心跳失败比例在15分钟之内是�
 
 
 <div STYLE="page-break-after: always;"></div>
+
 ##Hystrix 
 **断路器**
 
@@ -401,7 +403,9 @@ Controller 中正常调用，示例如下：
  
  
 <div STYLE="page-break-after: always;"></div>
+
 ##Zuul
+
 #####服务网关
 
 最简项目的依赖配置为：	
@@ -428,7 +432,7 @@ Controller 中正常调用，示例如下：
 
 
 
-######配置路由规则
+#####配置路由规则
 
 application.properties文件中的配置可以分为两部分，一部分是Zuul应用的基础信息，还有一部分则是路由规则，如下：
 
@@ -556,9 +560,11 @@ Demo如下：
 
 
 ##Spring Cloud Config
+
 ######分布式配置
 
 #####Config-Server:  
+
 流程：
 1、将配置文件上传至版本管理工具或者简单的文件访问服务器，当然最好是版本管理工具服务器。配置文件可以根据不同的环境上传多种文件。
    
@@ -584,11 +590,12 @@ eureka.client.service-url.defaultZone=http://localhost:1111/eureka/
 
 
 #####Config-Client:  
+
 1、在bootstrap.properties 中配置 服务名称，需要与上传的文件中的服务名称相同。  
 2、在类中可以用常用的方式进行配置属性的引用。
 
-            @Value("${sang}")
-            String sang;
+    @Value("${sang}")
+    String sang;
 
 
 
@@ -615,8 +622,7 @@ spring.cloud.config.fail-fast=true
 
 
 
-
-
-<br/><br/><br/><br/><br/><br/><br/><br/>
-<br/><br/><br/><br/><br/><br/><br/><br/>
-<br/><br/><br/><br/><br/><br/><br/><br/>
+<br/>
+<br/>
+<br/>
+<br/>
