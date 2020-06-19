@@ -49,7 +49,7 @@ github:  https://github.com/kswapd/spring-cloud-arch.git
     	}
     }
 
-
+  
 <div STYLE="page-break-after: always;"></div>
 
 ####Eureka Client

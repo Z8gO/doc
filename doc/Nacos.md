@@ -66,6 +66,10 @@ Nacos 使用：
 	生产：nacos-hello-prod.properties  
 	开发：nacos-hello-dev.properties
 	配置内容按照对应的需要的配置项进行配置。
+	
+3、@RefreshScope 在服务提供方REST请求的controller上需要增加这个注解。  
+表示数据会刷新。否则若在Nacos中进行配置发布后，访问接口上的配置数据不会刷新
+    
 
 
 ###Nacos 概念：
