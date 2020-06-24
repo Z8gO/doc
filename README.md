@@ -1,22 +1,24 @@
-# 学习笔记
+# 学习笔记  
 
-###包括：
-####git  
+###包括：  
 
-<br/>
+####1、git  
 
-####InfluxDB  
+
+####2、InfluxDB  
+
 ##### 时序数据库 InfluxDB  
 
-<br/>
 
-####Nacos  
+
+####3、Nacos  
+
 #####阿里开源注册中心+ 配置中心  
 
-<br/>
 
-####SpringBoot  
 
-<br/>
+####4、SpringBoot  
 
-####SpringCloud  
+
+
+####5、SpringCloud  
