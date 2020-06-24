@@ -1,25 +1,25 @@
 # 学习笔记  
-##Created By Z8g
+####### Created By Z8g
   
-###包括：  
+#### 包括：  
   
-####1、git  
+#### 1、git  
   
   
-####2、InfluxDB  
+#### 2、InfluxDB  
   
 ##### 时序数据库 InfluxDB  
   
   
   
-####3、Nacos  
+#### 3、Nacos  
   
-#####阿里开源注册中心+ 配置中心  
-  
-  
-  
-####4、SpringBoot  
+##### 阿里开源注册中心+ 配置中心  
   
   
   
-####5、SpringCloud  
+#### 4、SpringBoot  
+  
+  
+  
+#### 5、SpringCloud  
