@@ -236,6 +236,23 @@ nginx 配置：
 简单的入门结束
 ***
 
+#####2020-06-24
+这几天研究的Nacos 的一些细节：  
+1、Nacos 在1.2.0版本以及之前是可以通过  
+>nacos.security.ignore.urls=/**  
+>nacos.core.auth.caching.enabled=false  
+>security.basic.enabled=false  
+>management.security=false  
+
+配置这几个之后，就可以免登陆直接跳转控制台。
+1.2.1之后配置了这些的话，只是在调用Nacos 的方放的API接口的时候不用token了。
+
+2、Nacos 开放的接口文档：  
+>     https://nacos.io/zh-cn/docs/open-api.html  
+
+
+
+
 
 <br/><br/><br/><br/><br/><br/><br/><br/>
 <br/><br/><br/><br/><br/><br/><br/><br/>
