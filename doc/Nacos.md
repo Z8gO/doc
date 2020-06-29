@@ -251,7 +251,9 @@ nginx 配置：
 >     https://nacos.io/zh-cn/docs/open-api.html  
 
 
-
+3、Nacos 单机模式启动
+  
+> 在 VM Option中添加参数：-Dnacos.standalone=true
 
 
 <br/><br/><br/><br/><br/><br/><br/><br/>
