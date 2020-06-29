@@ -208,7 +208,7 @@ db.password=zhanghuang
 nginx 配置：  
 编辑nginx.conf 在 http 节点下增加:
 
-	    upstream nacos {
+        upstream nacos {
 		  server 127.0.0.1:8848;
 		  server 127.0.0.1:8849;
 		  server 127.0.0.1:8850;
@@ -238,14 +238,53 @@ nginx 配置：
 
 #####2020-06-24
 这几天研究的Nacos 的一些细节：  
-1、Nacos 在1.2.0版本以及之前是可以通过  
+1、Nacos 在1.1.4版本以及之前是可以通过  
 >nacos.security.ignore.urls=/**  
 >nacos.core.auth.caching.enabled=false  
 >security.basic.enabled=false  
 >management.security=false  
 
 配置这几个之后，就可以免登陆直接跳转控制台。
-1.2.1之后配置了这些的话，只是在调用Nacos 的方放的API接口的时候不用token了。
+
+1.2.1之后配置了这些的话，只是在调用Nacos 的开放的API接口的时候不用token了，但是控制台还是必须要密码。
+>如果还是需要去做免密登陆的话，可以删除自己使用的版本的前端文件，替换为 1.1.4版本的前端的文件。
+前端文件位置： console/src/main/resource/static。替换整个static 文件目录即可。  
+因为1.1.4和后面版本的一些小的变动。需要在新版本的console 模块中修改代码。  
+配置方面的是使用默认配置即可。  
+
+    路径：  
+    console/src/main/java/com/alibaba/nacos/console/controller/NamespaceController.java  
+    修改createNamespace方法，删除@RequestParam("customNamespaceId") String namespaceId 的传入。因为老版本前端无此参数。  
+    然后就是把此参数的值，直接通过UUID去生成，不需要去校验。
+
+修改下面的方法：
+
+    @PostMapping
+    @Secured(resource = NacosAuthConfig.CONSOLE_RESOURCE_NAME_PREFIX + "namespaces", action = ActionTypes.WRITE)
+    public Boolean createNamespace(HttpServletRequest request, HttpServletResponse response,
+                                  // @RequestParam("customNamespaceId") String namespaceId,
+                                   @RequestParam("namespaceName") String namespaceName,
+                                   @RequestParam(value = "namespaceDesc", required = false) String namespaceDesc) {
+        // TODO 获取用kp
+        /*if(StringUtils.isBlank(namespaceId)){
+            namespaceId = UUID.randomUUID().toString();
+        } else {
+            namespaceId = namespaceId.trim();
+            if (!namespaceIdCheckPattern.matcher(namespaceId).matches()) {
+                return false;
+            }
+            if (namespaceId.length() > NAMESPACE_ID_MAX_LENGTH) {
+                return false;
+            }
+            if(persistService.tenantInfoCountByTenantId(namespaceId) > 0){
+                return false;
+            }
+        }*/
+        String namespaceId = UUID.randomUUID().toString();
+        persistService.insertTenantInfoAtomic("1", namespaceId, namespaceName, namespaceDesc, "nacos",
+            System.currentTimeMillis());
+        return true;
+    }
 
 2、Nacos 开放的接口文档：  
 >     https://nacos.io/zh-cn/docs/open-api.html  
