@@ -1,13 +1,13 @@
-######张煌 zhanghuang@dcits.com
+######  张煌 zhanghuang@dcits.com
 
-#Spring Cloud 学习笔记
-######学习参考：
+#  Spring Cloud 学习笔记
+######  学习参考：
 >  
 csdn:  https://blog.csdn.net/u012702547/article/details/78717512  
 github:  https://github.com/kswapd/spring-cloud-arch.git
 
 
-######基本概念：
+######  基本概念：
 >服务发现——Netflix Eureka  
 客服端负载均衡——Netflix Ribbon  
 断路器——Netflix Hystrix  
@@ -18,11 +18,11 @@ github:  https://github.com/kswapd/spring-cloud-arch.git
 
 
 
-##Eureka
+##  Eureka
 >资料地址： https://mp.weixin.qq.com/s/K-WDRVLh-AFda_g7ga4iwA  
 
-####Eureka Server
-######配置文件
+####  Eureka Server
+######  配置文件
 >  
  server.port=1111  
  eureka.instance.hostname=localhost   
@@ -40,7 +40,7 @@ github:  https://github.com/kswapd/spring-cloud-arch.git
        eureka.client.service-url.defaultZone=http://ip1:port1/eureka/,http://ip2:port2/eureka/
        若需要配置多个注册中心，可以以上面的方式配置。以“,” 分隔
 
-######启动一个服务注册中心，在Spring Boot的入口类上添加一个@EnableEurekaServer注解
+######  启动一个服务注册中心，在Spring Boot的入口类上添加一个@EnableEurekaServer注解
     @SpringBootApplication
     @EnableEurekaServer
     public class Application {
@@ -52,16 +52,16 @@ github:  https://github.com/kswapd/spring-cloud-arch.git
   
 <div STYLE="page-break-after: always;"></div>
 
-####Eureka Client
+####  Eureka Client
 ***
 
-######在配置文件中，配置服务名和<font color='red'>注册中心地址</font>
+######  在配置文件中，配置服务名和<font color='red'>注册中心地址</font>
 
 >spring.application.name=hello-service  
 eureka.client.service-url.defaultZone=http://localhost:1111/eureka
 
 
-######在Spring Boot的入口函数处，通过添加@EnableDiscoveryClient注解来激活Eureka中的DiscoveryClient实现。
+######  在Spring Boot的入口函数处，通过添加@EnableDiscoveryClient注解来激活Eureka中的DiscoveryClient实现。
     @EnableDiscoveryClient
     @SpringBootApplication
     public class ProviderApplication {
@@ -72,7 +72,7 @@ eureka.client.service-url.defaultZone=http://localhost:1111/eureka
     
  
 
-####服务的发现与消费
+####  服务的发现与消费
 启动入口类上我们需要做两件事：
 
 >1.亮明Eureka客户端身份  
@@ -141,7 +141,7 @@ SpringBoot项目中默认是使用application.properties，
 在原Eureka Server的项目中添加两个配置文件application-peer1.properties和application-peer2.properties
 
 
-######application-peer1.properties:
+######  application-peer1.properties:
 >spring.application.name=eureka-server  
 server.port=1111  
 eureka.instance.hostname=peer1  
@@ -149,7 +149,7 @@ eureka.client.register-with-eureka=false
 eureka.client.fetch-registry=false  
 eureka.client.service-url.defaultZone=http://peer2:1112/eureka/  
 
-######application-peer2.properties:
+######  application-peer2.properties:
 
 >spring.application.name=eureka-server  
 server.port=1112  
@@ -170,42 +170,42 @@ java -jar eureka-server-0.0.1-SNAPSHOT.jar --spring.profiles.active=peer2
 
 <br/>
 
-####Eureka中的核心概念
+####  Eureka中的核心概念
 
-Eureka服务治理体系中涉及到三个核心概念：服务注册中心、服务提供者以及服务消费者。
-
-服务提供者：  只要支持Eureka通信机制，都可以作为服务提供者，向注册中心注册。
-
-服务注册：  服务提供者在启动的时候会通过发送REST请求将自己注册到Eureka Server上，同时还携带了自身服务的一些元数据信息。Eureka Server在接收到这个REST请求之后，将元数据信息存储在一个双层结构的Map集合中，第一层的key是服务名，第二层的key是具体服务的实例名，在服务注册时，需要确认一下eureka.client.register-with-eureka=true配置是否正确，该值默认就为true，表示启动注册操作，如果设置为false则不会启动注册操作。   
-
-服务下线：  
-服务提供者在运行的过程中可能会发生关闭或者重启，当服务进行正常关闭时，它会触发一个服务下线的REST请求给Eureka Server，告诉服务注册中心我要下线了，服务注册中心收到请求之后，将该服务状态置为DOWN，表示服务已下线，并将该事件传播出去，这样就可以避免服务消费者调用了一个已经下线的服务提供者了。
-
-失效剔除：  
-正常的服务下线发生流程有一个前提那就是服务正常关闭,但是在实际运行中服务有可能没有正常关闭，比如系统故障、网络故障等原因导致服务提供者非正常下线，那么这个时候对于已经下线的服务Eureka采用了定时清除：Eureka Server在启动的时候会创建一个定时任务，每隔60秒就去将当前服务提供者列表中超过90秒还没续约的服务剔除出去，通过这种方式来避免服务消费者调用了一个无效的服务。
-
-
-服务同步：  
-有两个服务注册中心，地址分别是http://localhost:1111 和 http://localhost:1112， <font color='red'>在两个服务注册中也相互注册的情况下（参考搭建高可用注册中心）</font>，
-如果有两个服务提供者，地址分别是http://localhost:8080 和 http://localhost:8081， 然后我将8080这个服务提供者注册到1111这个注册中心上去，将8081这个服务提供者注册到1112这个注册中心上去，此时我在服务消费者中如果只向1111这个注册中心去查找服务提供者，那么就能获取到8080  和 8081这两个的服务。
-
-
-服务续约：  
-在注册完服务之后，服务提供者会维护一个心跳来不停的告诉Eureka Server：“我还在运行”，以防止Eureka Server将该服务实例从服务列表中剔除，这个动作称之为服务续约，和服务续约相关的属性有两个，如下：
-
-    eureka.instance.lease-expiration-duration-in-seconds=90  
-    eureka.instance.lease-renewal-interval-in-seconds=30
+    Eureka服务治理体系中涉及到三个核心概念：服务注册中心、服务提供者以及服务消费者。
     
-上面两个都是默认配置，第一个配置用来定义服务失效时间，默认为90秒，第二个用来定义服务续约的间隔时间，默认为30秒。
-
-
-服务消费者：  
-消费者主要是从服务注册中心获取服务列表，拿到服务提供者的列表之后，服务消费者就知道去哪里调用它所需要的服务了。  
-当我们启动服务消费者的时候，它会发送一个REST请求给服务注册中心来获取服务注册中心上面的服务提供者列表，而Eureka Server上则会维护一份只读的服务清单来返回给客户端，这个服务清单并不是实时数据，而是一份缓存数据，默认30秒更新一次，如果想要修改清单更新的时间间隔，可以通过eureka.client.registry-fetch-interval-seconds=30来修改，单位为秒(注意这个修改是在eureka-server上来修改)。另一方面，我们的服务消费端要确保具有获取服务提供者的能力，此时要确保eureka.client.fetch-registry=true这个配置为true。
-
-
-自我保护：  
-Eureka Server在运行期间会去统计心跳失败比例在15分钟之内是否低于85%，如果低于85%，Eureka Server会将这些实例保护起来，让这些实例不会过期，但是在保护期内如果服务刚好这个服务提供者非正常下线了，此时服务消费者就会拿到一个无效的服务实例，此时会调用失败，对于这个问题需要服务消费者端要有一些容错机制，如重试，断路器等。我们在单机测试的时候很容易满足心跳失败比例在15分钟之内低于85%，这个时候就会触发Eureka的保护机制，一旦开启了保护机制，则服务注册中心维护的服务实例就不是那么准确了，此时我们可以使用eureka.server.enable-self-preservation=false来关闭保护机制，这样可以确保注册中心中不可用的实例被及时的剔除。
+    服务提供者：  只要支持Eureka通信机制，都可以作为服务提供者，向注册中心注册。
+    
+    服务注册：  服务提供者在启动的时候会通过发送REST请求将自己注册到Eureka Server上，同时还携带了自身服务的一些元数据信息。Eureka Server在接收到这个REST请求之后，将元数据信息存储在一个双层结构的Map集合中，第一层的key是服务名，第二层的key是具体服务的实例名，在服务注册时，需要确认一下eureka.client.register-with-eureka=true配置是否正确，该值默认就为true，表示启动注册操作，如果设置为false则不会启动注册操作。   
+    
+    服务下线：  
+    服务提供者在运行的过程中可能会发生关闭或者重启，当服务进行正常关闭时，它会触发一个服务下线的REST请求给Eureka Server，告诉服务注册中心我要下线了，服务注册中心收到请求之后，将该服务状态置为DOWN，表示服务已下线，并将该事件传播出去，这样就可以避免服务消费者调用了一个已经下线的服务提供者了。
+    
+    失效剔除：  
+    正常的服务下线发生流程有一个前提那就是服务正常关闭,但是在实际运行中服务有可能没有正常关闭，比如系统故障、网络故障等原因导致服务提供者非正常下线，那么这个时候对于已经下线的服务Eureka采用了定时清除：Eureka Server在启动的时候会创建一个定时任务，每隔60秒就去将当前服务提供者列表中超过90秒还没续约的服务剔除出去，通过这种方式来避免服务消费者调用了一个无效的服务。
+    
+    
+    服务同步：  
+    有两个服务注册中心，地址分别是http://localhost:1111 和 http://localhost:1112， <font color='red'>在两个服务注册中也相互注册的情况下（参考搭建高可用注册中心）</font>，
+    如果有两个服务提供者，地址分别是http://localhost:8080 和 http://localhost:8081， 然后我将8080这个服务提供者注册到1111这个注册中心上去，将8081这个服务提供者注册到1112这个注册中心上去，此时我在服务消费者中如果只向1111这个注册中心去查找服务提供者，那么就能获取到8080  和 8081这两个的服务。
+    
+    
+    服务续约：  
+    在注册完服务之后，服务提供者会维护一个心跳来不停的告诉Eureka Server：“我还在运行”，以防止Eureka Server将该服务实例从服务列表中剔除，这个动作称之为服务续约，和服务续约相关的属性有两个，如下：
+    
+        eureka.instance.lease-expiration-duration-in-seconds=90  
+        eureka.instance.lease-renewal-interval-in-seconds=30
+        
+    上面两个都是默认配置，第一个配置用来定义服务失效时间，默认为90秒，第二个用来定义服务续约的间隔时间，默认为30秒。
+    
+    
+    服务消费者：  
+    消费者主要是从服务注册中心获取服务列表，拿到服务提供者的列表之后，服务消费者就知道去哪里调用它所需要的服务了。  
+    当我们启动服务消费者的时候，它会发送一个REST请求给服务注册中心来获取服务注册中心上面的服务提供者列表，而Eureka Server上则会维护一份只读的服务清单来返回给客户端，这个服务清单并不是实时数据，而是一份缓存数据，默认30秒更新一次，如果想要修改清单更新的时间间隔，可以通过eureka.client.registry-fetch-interval-seconds=30来修改，单位为秒(注意这个修改是在eureka-server上来修改)。另一方面，我们的服务消费端要确保具有获取服务提供者的能力，此时要确保eureka.client.fetch-registry=true这个配置为true。
+    
+    
+    自我保护：  
+    Eureka Server在运行期间会去统计心跳失败比例在15分钟之内是否低于85%，如果低于85%，Eureka Server会将这些实例保护起来，让这些实例不会过期，但是在保护期内如果服务刚好这个服务提供者非正常下线了，此时服务消费者就会拿到一个无效的服务实例，此时会调用失败，对于这个问题需要服务消费者端要有一些容错机制，如重试，断路器等。我们在单机测试的时候很容易满足心跳失败比例在15分钟之内低于85%，这个时候就会触发Eureka的保护机制，一旦开启了保护机制，则服务注册中心维护的服务实例就不是那么准确了，此时我们可以使用eureka.server.enable-self-preservation=false来关闭保护机制，这样可以确保注册中心中不可用的实例被及时的剔除。
 
 
 
@@ -214,12 +214,12 @@ Eureka Server在运行期间会去统计心跳失败比例在15分钟之内是�
 
 <div STYLE="page-break-after: always;"></div>
 
-##Hystrix 
+##  Hystrix 
 **断路器**
 
 >  看了一些文章，说一说我的理解，所谓断路器，就是说在微服务中，一般会有服务之间互相调用的情况，如果某一个服务挂掉了之后不采取任何措施，那么这个服务的消费者在调用这个服务时会出现请求失败或者超时的情况，高并发的情况下，后果无法想象，这个时候断路器的作用就很重要了。  
 
-#####服务消费者中加入断路器
+#####  服务消费者中加入断路器
 
     <dependency>
         <groupId>org.springframework.cloud</groupId>
@@ -228,7 +228,7 @@ Eureka Server在运行期间会去统计心跳失败比例在15分钟之内是�
 
 
 
-#####修改服务消费者启动入口类
+#####  修改服务消费者启动入口类
 引入hystrix之后，我们需要在入口类上通过@EnableCircuitBreaker开启断路器功能，如下:
 
 
@@ -260,7 +260,7 @@ Eureka Server在运行期间会去统计心跳失败比例在15分钟之内是�
     
     
 
-#####Service的中使用
+#####  Service的中使用
     @Service
     public class HelloService {
      @Autowired
@@ -290,7 +290,7 @@ https://mp.weixin.qq.com/s/r05WF7WP3Qd7As_fTBkxaw
 
 
 
-######Hystrix的服务降级与异常处理
+######  Hystrix的服务降级与异常处理
 在Service中：
 
     @HystrixCommand(fallbackMethod = "testBackup")
@@ -312,18 +312,18 @@ https://mp.weixin.qq.com/s/r05WF7WP3Qd7As_fTBkxaw
 如上，当test 执行出现问题时，先做一个降级处理，去调用testBackup 再去执行一个动作，当这个降级的操作也出现问题时，再去执行错误方法。
 
 
-######通过注解开启缓存
+######  通过注解开启缓存
 可以通过注解来开启缓存，和缓存相关的注解一共有三个，分别是@CacheResult、@CacheKey和@CacheRemove  
 详细参考： https://mp.weixin.qq.com/s/YpWODLrwzFXUQRtIAHLF3Q
 
 
 
-#####Hystrix的请求合并
+#####  Hystrix的请求合并
 核心类：HystrixCollapser
 
 >非注解方式实现请求合并先不做学习，但是非注解方式有利于更清晰的理解代码，等后面做详细的学习时再研究，此部分以使用上手为目的。
 
-######通过注解更优雅的实现请求合并
+######  通过注解更优雅的实现请求合并
 
 
 在Service 中进行修改：
@@ -396,7 +396,7 @@ Controller 中正常调用，示例如下：
         }
     }
     
- ######Feign配置详解
+ ######  Feign配置详解
  
  参考： <a href="https://mp.weixin.qq.com/s/R5PX6fJhJ-Yi7YN7p32G1Q" target="_blank">Feign配置详解</a>  
  
@@ -404,9 +404,9 @@ Controller 中正常调用，示例如下：
  
 <div STYLE="page-break-after: always;"></div>
 
-##Zuul
+##  Zuul
 
-#####服务网关
+#####  服务网关
 
 最简项目的依赖配置为：	
 
@@ -432,7 +432,7 @@ Controller 中正常调用，示例如下：
 
 
 
-#####配置路由规则
+#####  配置路由规则
 
 application.properties文件中的配置可以分为两部分，一部分是Zuul应用的基础信息，还有一部分则是路由规则，如下：
 
@@ -464,7 +464,7 @@ application.properties文件中的配置可以分为两部分，一部分是Zuul
 
 
 
-#####请求过滤
+#####  请求过滤
 
 对一些请求或者请求的参数进行过滤，达到对请求的过滤。  
 
@@ -509,14 +509,14 @@ Demo如下：
 
 配置细节：
 
-######不对外部提供请求：
+######  不对外部提供请求：
 > zuul.ignored-services=hello-service
 
 在配置后当从路由请求时，会直接被 Zuul Server 过滤掉。
 
 
 
-######让路由的匹配按照配置文件的配置顺序依次匹配
+######  让路由的匹配按照配置文件的配置顺序依次匹配
 
 此时则不能使用application.properties(解析后是以Map存储的，是无序的），必须使用 application.yml文件进行配置。
 
@@ -540,7 +540,7 @@ Demo如下：
 
 
 
-######异常处理
+######  异常处理
 参考： https://mp.weixin.qq.com/s/Y73q8XrVoEuVqCNpexiVHg
 
 重点：自定义异常
@@ -559,11 +559,11 @@ Demo如下：
     }
 
 
-##Spring Cloud Config
+##  Spring Cloud Config
 
-######分布式配置
+######  分布式配置
 
-#####Config-Server:  
+#####  Config-Server:  
 
 流程：
 1、将配置文件上传至版本管理工具或者简单的文件访问服务器，当然最好是版本管理工具服务器。配置文件可以根据不同的环境上传多种文件。
@@ -589,7 +589,7 @@ eureka.client.service-url.defaultZone=http://localhost:1111/eureka/
 
 
 
-#####Config-Client:  
+#####  Config-Client:  
 
 1、在bootstrap.properties 中配置 服务名称，需要与上传的文件中的服务名称相同。  
 2、在类中可以用常用的方式进行配置属性的引用。
@@ -617,8 +617,6 @@ spring.cloud.config.fail-fast=true
 一些有用的思想：
 
 >在模块拆分为多个服务后，数据库层面也会得到拆分。功能之间的相互依赖会变为服务之间相互调用，在此中应该尽可能的做到服务之间的 “无事务”
-
-
 
 
 

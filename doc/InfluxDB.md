@@ -1,20 +1,20 @@
-######张煌 zhanghuang@dcits.com
+######  张煌 zhanghuang@dcits.com
 
-##InfluxDB 学习笔记
-####时序数据库
+##  InfluxDB 学习笔记
+####  时序数据库
 
-######场景
+######  场景
 平台需要监控各种状态，各种细节的数据如：内存、CPU、响应时间、用户操作等等，并且需要把每时每刻监控的数据记录下来，用来做大数据分析。如果只是存储下来不查询也还好（虽然已经是不小的成本），但如果需要快速查询“某个时间点的系统的各个细节数据信息”这样的多纬度分组聚合查询，那么时序数据库会是一个很好的选择。
 
-######概念相关参考：
+######  概念相关参考：
 
  > <a href="https://www.jianshu.com/p/f0905f36e9c3" target="_blank">InfluxDB 入门</a>  
 <a href="https://www.influxdata.com/" target="_blank">influxdb官网</a>   
 <a href="https://docs.influxdata.com/influxdb/v1.7/" target="_blank">相关API官网</a>  
 
 
-######操作语句： 
-######请注意语句区分大小写  
+######  操作语句： 
+######  请注意语句区分大小写  
 
 >show databases;
 
