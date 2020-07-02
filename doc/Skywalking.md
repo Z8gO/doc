@@ -1,4 +1,4 @@
-###  skywalking（应用性能监控系统） 
+###  skyWalking（应用性能监控系统） 
 ######  张煌 zhanghuang@dcits.com
 
 ######  学习SW同时，可以顺带学习一下 云原生、 devops 的思想理念。
@@ -66,6 +66,21 @@ SW中配置(conf/application.yml):
 如果skywalking是初次连接elasticsearch服务，启动会比较慢，（很慢。。。）  
 因为skywalking需要向es服务创建很多的index。所以在未创建完成之前，访问这个页面会是空白的。此时可以通过查看日志来判断启动是否完成，日志路径：logs/skywalking-oap-server.log。
 
+
+#####  使用：
+
+     https://www.jianshu.com/p/2e9bafe6edbb
+
+github 下载  
+
+    https://github.com/apache/skywalking.git  
+    如果下载太慢或者不行的话，可以通过 gitee,先在gitee 下把GitHub的仓库克隆一份，然后下载，这样就变成国内的网络下载了。
+
+     
+#####  源码编译：
+
+    https://www.cnblogs.com/terryMe/p/12251378.html
+    
 
 
 
