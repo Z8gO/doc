@@ -1,7 +1,7 @@
 ###  SkyWalking（应用性能监控系统）
 ######  张煌 zhanghuang@dcits.com
 ###### SkyWalking: an APM(application performance monitor) system, especially designed for microservices, cloud native and container-based (Docker, Kubernetes, Mesos) architectures.
-
+###### SkyWalking: 一个开源的可观测平台, 用于从服务和云原生基础设施收集, 分析, 聚合及可视化数据。SkyWalking 提供了一种简便的方式来清晰地观测分布式系统, 甚至横跨多个云平台。SkyWalking 更是一个现代化的应用程序性能监控(Application Performance Monitoring)系统, 尤其专为云原生、基于容器的分布式系统设计
 
 skywalking-quick-start:  
 
@@ -80,13 +80,13 @@ SW中配置(conf/application.yml):
 #####  源码编译：
 
     https://www.cnblogs.com/terryMe/p/12251378.html  
-    编译时间很长
+    编译时间很长............
     
 
-我自己在源码编译的过程中遇到的问题：  
-
-     1、下载下来的源码报错，缺失jar，但是maven并没有报错，从maven重新导入多次后仍没有解决。最终解决办法：直接删除本地的maven用来存储下载的jar的文件目录，让maven重新下载所有依赖。
-
+>我自己在源码编译的过程中遇到的问题：  
+>下载下来的源码报错，缺失jar，但是maven并没有报错，从maven重新导入多次后仍没有解决，正常来说源码不可能有问题，那么只能是我自己的环境有问题。  
+>最终解决办法：直接删除本地的maven用来存储下载的jar的文件目录，让maven重新下载所有依赖。
+        
 
 相关的文档：  
 
