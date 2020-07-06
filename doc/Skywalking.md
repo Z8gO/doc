@@ -1,6 +1,6 @@
 ###  SkyWalking（应用性能监控系统）
 ######  张煌 zhanghuang@dcits.com
-######SkyWalking: an APM(application performance monitor) system, especially designed for microservices, cloud native and container-based (Docker, Kubernetes, Mesos) architectures.
+###### SkyWalking: an APM(application performance monitor) system, especially designed for microservices, cloud native and container-based (Docker, Kubernetes, Mesos) architectures.
 
 
 skywalking-quick-start:  
@@ -71,7 +71,7 @@ SW中配置(conf/application.yml):
 
      https://www.jianshu.com/p/2e9bafe6edbb
 
-#####  github 下载  
+#####  github源码下载  
 
     https://github.com/apache/skywalking.git  
     如果下载太慢或者不行的话，可以通过 gitee,先在gitee 下把GitHub的仓库克隆一份，然后下载，这样就变成国内的网络下载了。
@@ -92,6 +92,9 @@ SW中配置(conf/application.yml):
 
     OpenTracing:开放式分布式追踪规范  
     https://www.jianshu.com/p/d2b11c079af0
+    
+    概念：（Tags、 Spans、 Tracers）  
+    https://opentracing.io/docs/overview/spans/  
 
 #####  SkyingWalking Plugin Development Guide  
 ######  SkyingWalking 插件开发
@@ -100,6 +103,8 @@ SW中配置(conf/application.yml):
     https://github.com/apache/skywalking/blob/v7.0.0/docs/en/guides/Java-Plugin-Development-Guide.md  
     中文文档：
     https://skyapm.github.io/document-cn-translation-of-skywalking/zh/8.0.0/guides/Java-Plugin-Development-Guide.html  
+
+    
 
 ######  源码学习总结：
     注意点：
