@@ -83,18 +83,29 @@ SW中配置(conf/application.yml):
     编译时间很长............
     
 
->我自己在源码编译的过程中遇到的问题：  
->下载下来的源码报错，缺失jar，但是maven并没有报错，从maven重新导入多次后仍没有解决，正常来说源码不可能有问题，那么只能是我自己的环境有问题。  
->最终解决办法：直接删除本地的maven用来存储下载的jar的文件目录，让maven重新下载所有依赖。
+    我自己在源码编译的过程中遇到的问题：  
+    下载下来的源码报错，缺失jar，但是maven并没有报错，从maven重新导入多次后仍没有解决，正常来说源码不可能有问题，那么只能是我自己的环境有问题。  
+    最终解决办法：直接删除本地的maven用来存储下载的jar的文件目录，让maven重新下载所有依赖。
+    
+    之前有一个IDEA的问题，
+    因为有下了开源的软件，想着只需要连接阿里的私库就可以，，就不用连接公司内网的私库了，
+    所以又重新写了一个setting.xml文件，在IDEA中换了此文件后，依然还是会去公司内网的库去下载，
+    IDEA中点击 File → Settings →Build Tools → Maven → Repositories 此部分为IDEA缓存的 私库的连接地址。
+    结果看到了之前配置的信息，等于是此次更换setting.xml 没生效，
+    解决办法：
+    清理IDEA缓存。点击 File → Invalidate Caches / Restart
         
 
-相关的文档：  
+#####  相关的文档：  
 
     OpenTracing:开放式分布式追踪规范  
     https://www.jianshu.com/p/d2b11c079af0
     
     概念：（Tags、 Spans、 Tracers）  
     https://opentracing.io/docs/overview/spans/  
+      
+    OpenTracing语义标准  
+    https://github.com/opentracing-contrib/opentracing-specification-zh/blob/master/specification.md
 
 #####  SkyingWalking Plugin Development Guide  
 ######  SkyingWalking 插件开发
@@ -116,4 +127,6 @@ SW中配置(conf/application.yml):
     1、在启动时首先加载 skywalking-agent.jar 中的SkyWalkingAgent.class ，调用SkyWalkingAgent#premain方法  
     2、加载所有的 skywalking-plug.def文件。这个文件就是我们自定义插件中必须配置的文件。  
     
+
+
 
