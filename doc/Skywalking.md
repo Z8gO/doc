@@ -121,12 +121,93 @@ SW中配置(conf/application.yml):
     注意点：
     一、agent包在打包时有Premain-Class 项。
     Premain-Class: org.apache.skywalking.apm.agent.SkyWalkingAgent
+    mvn  打包命令： mvnw clean package -DskipTests -Pagent 
     二、如何使用：
     通过在VM options处输入 -javaagent:/path/skywalking-agent/skywalking-agent.jar命令，进行启动。
     skywalking 插件加载过程:
     1、在启动时首先加载 skywalking-agent.jar 中的SkyWalkingAgent.class ，调用SkyWalkingAgent#premain方法  
     2、加载所有的 skywalking-plug.def文件。这个文件就是我们自定义插件中必须配置的文件。  
     
+    
+    看到SW在第一次启动时会去创建一大堆的表,大概分析源码是怎么去启动并第一次创建表的。（以server-starter-es7 启动为例）
+    oap-server/server-starter-es7下：
+    
+    org.apache.skywalking.oap.server.starter.OAPServerStartUp 的main方法调用 OAPServerBootstrap.start()
+    进入start()，在加载完applicationConfiguration之后，
+    进行 manager.init(applicationConfiguration);  
+    
+    以下为init方法的源码：
+    public void init(
+        ApplicationConfiguration applicationConfiguration) throws ModuleNotFoundException, ProviderNotFoundException, ServiceNotProvidedException, CycleDependencyException, ModuleConfigException, ModuleStartException {
+        String[] moduleNames = applicationConfiguration.moduleList();
+        // SPI机制查找所有模块实现类 ModuleDefine
+        ServiceLoader<ModuleDefine> moduleServiceLoader = ServiceLoader.load(ModuleDefine.class);
+        // SPI机制查实模块提供者实现类 ModuleProvider
+        ServiceLoader<ModuleProvider> moduleProviderLoader = ServiceLoader.load(ModuleProvider.class);
+        // 配置文件定义的模块
+        LinkedList<String> moduleList = new LinkedList<>(Arrays.asList(moduleNames));
+        // 检查配置文件中定义的模块，系统是是否存在
+        for (ModuleDefine module : moduleServiceLoader) {
+            for (String moduleName : moduleNames) {
+                if (moduleName.equals(module.name())) {
+                    ModuleDefine newInstance;
+                    try {
+                        // 反射创建实例
+                        newInstance = module.getClass().newInstance();
+                    } catch (InstantiationException | IllegalAccessException e) {
+                        throw new ModuleNotFoundException(e);
+                    }
+                    //  模块准备流程
+                    newInstance.prepare(this, applicationConfiguration.getModuleConfiguration(moduleName), moduleProviderLoader);
+                    loadedModules.put(moduleName, newInstance);
+                    moduleList.remove(moduleName);
+                }
+            }
+        }
+        // Finish prepare stage
+        isInPrepareStage = false;
+        
+        // 存在不知名module配置则抛异常
+        if (moduleList.size() > 0) {
+            throw new ModuleNotFoundException(moduleList.toString() + " missing.");
+        }
 
+        BootstrapFlow bootstrapFlow = new BootstrapFlow(loadedModules);
+        
+        // 模块加载完成 启动服务
+        bootstrapFlow.start(this);
+        bootstrapFlow.notifyAfterCompleted();
+    }
+    
+        
+        bootstrapFlow.start(this);
+        源码：
+        
+        void start( ModuleManager moduleManager) throws ModuleNotFoundException, ServiceNotProvidedException, ModuleStartException {
+            for (ModuleProvider provider : startupSequence) {
+                String[] requiredModules = provider.requiredModules();
+                if (requiredModules != null) {
+                    for (String module : requiredModules) {
+                        if (!moduleManager.has(module)) {
+                            throw new ModuleNotFoundException(module + " is required by " + provider.getModuleName() + "." + provider
+                                .name() + ", but not found.");
+                        }
+                    }
+                }
+                logger.info("start the provider {} in {} module.", provider.name(), provider.getModuleName());
+                provider.requiredCheck(provider.getModule().services());
+                
+                /**provider 启动
+                 *因为 oap-server/server-storage-plugin/storage-elasticsearch7-plugin
+                 *下的resource/META-INF/services/org.apache.skywalking.oap.server.library.module.ModuleProvider 文件中配置了
+                 *org.apache.skywalking.oap.server.storage.plugin.elasticsearch7.StorageModuleElasticsearch7Provider
+                 *所以根据 Java SPI机制,这个等于是调用
+                 *org.apache.skywalking.oap.server.storage.plugin.elasticsearch7.StorageModuleElasticsearch7Provider.start()
+                 *后面就开始比如检查表是否存在不存在则创建表，初始化数据
+                 */
+                provider.start();
+            }
+        }
+    
 
 
