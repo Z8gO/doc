@@ -31,7 +31,7 @@ ES中的配置（config\elasticsearch.yml）：
     cluster.initial_master_nodes: ["elasticsearch-node-1"]
 
 
-SW中配置(conf/application.yml):
+单机SW中配置(conf/application.yml):
     
     1、注释掉storage节点下 h2节点的所有配置。
     2、修改elasticsearch7节点下的配置。
@@ -60,10 +60,160 @@ SW中配置(conf/application.yml):
         segmentQueryMaxSize: ${SW_STORAGE_ES_QUERY_SEGMENT_SIZE:200}
 
 
+### 集群SW配置注意点
+
+config/application.yml ：
+
+    cluster:
+      selector: ${SW_CLUSTER:nacos}  #如果使用nacos作为服务注册中心，需要有nacos相关的配置。
+      nacos:
+        serviceName: ${SW_SERVICE_NAME:"SkyWalking_OAP_Cluster"}
+        hostPort: ${SW_CLUSTER_NACOS_HOST_PORT:localhost:8848,localhost:8849,localhost:8850}
+        # Nacos Configuration namespace
+        namespace: ${SW_CLUSTER_NACOS_NAMESPACE:"public"}
+    storage:
+      selector: ${SW_STORAGE:elasticsearch7}
+      elasticsearch7:
+          nameSpace: ${SW_NAMESPACE:"elasticsearch"}
+    
+    #下面这块如果是一台集群部署集群需要注意 restPort 和 gRPCPort
+    #多台机器部署集群的话，如果确定端口没有被其他服务占用，则可以忽略
+    core:
+      selector: ${SW_CORE:default}
+      default:
+        # Mixed: Receive agent data, Level 1 aggregate, Level 2 aggregate
+        # Receiver: Receive agent data, Level 1 aggregate
+        # Aggregator: Level 2 aggregate
+        role: ${SW_CORE_ROLE:Mixed} # Mixed/Receiver/Aggregator
+        #REST 请求地址 webapp模块 使用
+        restHost: ${SW_CORE_REST_HOST:0.0.0.0}
+        #REST 请求端口 webapp模块 使用
+        restPort: ${SW_CORE_REST_PORT:12800}
+        restContextPath: ${SW_CORE_REST_CONTEXT_PATH:/}
+        #gRPC请求地址 agent模块 使用
+        gRPCHost: ${SW_CORE_GRPC_HOST:0.0.0.0}
+        #gRPC 请求端口 agent模块 使用
+        gRPCPort: ${SW_CORE_GRPC_PORT:11800}
+
+agent/config/agent.config
+
+        # Backend service addresses.
+        collector.backend_service=${SW_AGENT_COLLECTOR_BACKEND_SERVICES:127.0.0.1:11800,127.0.0.1:11801,127.0.0.1:11802}
+        
+        
+webapp/wabapp.yml
+
+        listOfServers: 127.0.0.1:12800,127.0.0.1:12801,127.0.0.1:12802
 
 
 
-如果skywalking是初次连接elasticsearch服务，启动会比较慢，（很慢。。。）  
+告警规则配置（config/alarm-settings.yml）
+
+        rules:
+          #所有的规则名称必须以`_rule`结尾。
+          # Rule unique name, must be ended with `_rule`.
+          #最近3分钟内服务平均响应时间超过1秒。
+          #服务响应时间规则
+          service_resp_time_rule:
+            metrics-name: service_resp_time
+            #和阈值比较的符号
+            op: ">"
+            #阈值
+            threshold: 1000
+            period: 10
+            #告警触发次数，触发n次后进行告警
+            count: 3
+            silence-period: 5
+            #页面提示信息
+            message: Response time of service {name} is more than 1000ms in 3 minutes of last 10 minutes.
+            
+          #最近2分钟的服务成功率低于80％。
+          service_sla_rule:
+            # Metrics value need to be long, double or int
+            metrics-name: service_sla
+            op: "<"
+            threshold: 8000
+            # The length of time to evaluate the metrics
+            period: 10
+            # How many times after the metrics match the condition, will trigger alarm
+            count: 2
+            # How many times of checks, the alarm keeps silence after alarm triggered, default as same as period.
+            silence-period: 3
+            message: Successful rate of service {name} is lower than 80% in 2 minutes of last 10 minutes
+          #在过去3分钟内，服务90％的响应时间超过1秒
+          service_resp_time_percentile_rule:
+            # Metrics value need to be long, double or int
+            metrics-name: service_percentile
+            op: ">"
+            threshold: 1000,1000,1000,1000,1000
+            period: 10
+            count: 3
+            silence-period: 5
+            message: Percentile response time of service {name} alarm in 3 minutes of last 10 minutes, due to more than one condition of p50 > 1000, p75 > 1000, p90 > 1000, p95 > 1000, p99 > 1000
+          #最近2分钟内服务实例的平均响应时间超过1秒。
+          service_instance_resp_time_rule:
+            metrics-name: service_instance_resp_time
+            op: ">"
+            threshold: 1000
+            period: 10
+            count: 2
+            silence-period: 5
+            message: Response time of service instance {name} is more than 1000ms in 2 minutes of last 10 minutes
+        #  Active endpoint related metrics alarm will cost more memory than service and service instance metrics alarm.
+        #  Because the number of endpoint is much more than service and instance.
+        #   最近2分钟内端点平均响应时间超过1秒。
+        #  endpoint_avg_rule:
+        #    metrics-name: endpoint_avg
+        #    op: ">"
+        #    threshold: 1000
+        #    period: 10
+        #    count: 2
+        #    silence-period: 5
+        #    message: Response time of endpoint {name} is more than 1000ms in 2 minutes of last 10 minutes
+        
+        #Webhook要求对等方是一个Web容器。
+        #警报消息将按application/json内容类型通过HTTP发布。
+        #JSON格式基于List<org.apache.skywalking.oap.server.core.alarm.AlarmMessage>
+        #有以下关键信息：
+        #范围(scopeId, scope): 所有范围都在org.apache.skywalking.oap.server.core.source.DefaultScopeDefine中定义。 
+        #名字(name): 目标范围实体名称。 
+        #实体的ID(id0): 作用域实体的ID，与名称匹配。 
+        #实体的ID(id1): 作用域实体的ID1，与名称匹配。
+        #规则名称(ruleName): 您在中配置的规则名称alarm-settings.yml。 
+        #报警消息(alarmMessage): 报警文本消息。 
+        #时间(startTime): 以毫秒为单位，介于当前时间和UTC 1970年1月1日午夜之间。 
+        webhooks:
+        #  - http://127.0.0.1/notify/
+        #  - http://127.0.0.1/go-wechat/
+        
+<br/>
+
+org.apache.skywalking.oap.server.core.alarm.AlarmMessage :
+        
+        @Setter(AccessLevel.PUBLIC)
+        @Getter(AccessLevel.PUBLIC)
+        public class AlarmMessage {
+        
+            public static AlarmMessage NONE = new NoAlarm();
+        
+            private int scopeId;
+            private String scope;
+            private String name;
+            private int id0;
+            private int id1;
+            private String ruleName;
+            private String alarmMessage;
+            private long startTime;
+        
+            private static class NoAlarm extends AlarmMessage {
+            }
+        }
+
+
+
+
+
+如果skywalking是初次连接elasticsearch服务，启动会比较慢,要创建表。  
 因为skywalking需要向es服务创建很多的index。所以在未创建完成之前，访问这个页面会是空白的。此时可以通过查看日志来判断启动是否完成，日志路径：logs/skywalking-oap-server.log。
 
 
@@ -81,12 +231,11 @@ SW中配置(conf/application.yml):
 
     https://www.cnblogs.com/terryMe/p/12251378.html  
     编译时间很长............
-    
 
     我自己在源码编译的过程中遇到的问题：  
     下载下来的源码报错，缺失jar，但是maven并没有报错，从maven重新导入多次后仍没有解决，正常来说源码不可能有问题，那么只能是我自己的环境有问题。  
     最终解决办法：直接删除本地的maven用来存储下载的jar的文件目录，让maven重新下载所有依赖。
-    
+
     之前有一个IDEA的问题，
     因为有下了开源的软件，想着只需要连接阿里的私库就可以，，就不用连接公司内网的私库了，
     所以又重新写了一个setting.xml文件，在IDEA中换了此文件后，依然还是会去公司内网的库去下载，
