@@ -196,9 +196,9 @@ org.apache.skywalking.oap.server.core.alarm.AlarmMessage :
         
             public static AlarmMessage NONE = new NoAlarm();
         
-            private int scopeId;
-            private String scope;
-            private String name;
+            private int scopeId;   //指的是告警的范围类型（源码中有定义常量org.apache.skywalking.oap.server.core.source.DefaultScopeDefine）
+            private String scope;  
+            private String name; //告警服务名称
             private int id0;
             private int id1;
             private String ruleName;
@@ -358,5 +358,71 @@ org.apache.skywalking.oap.server.core.alarm.AlarmMessage :
             }
         }
     
+
+
+#### SkyWalking + Prometheus + Grafana
+
+    参考文档:
+    SkyWalking/docs/en/setup/backend/backend-telemetry.md
+
+<br/>
+
+ 1、SkyWalking 配置
+ 
+    关键配置：selector: ${SW_TELEMETRY:so11y}
+    
+    具体配置如下：
+ 
+    telemetry:
+      selector: ${SW_TELEMETRY:so11y}
+      none:
+      prometheus:
+        host: ${SW_TELEMETRY_PROMETHEUS_HOST:0.0.0.0}
+        port: ${SW_TELEMETRY_PROMETHEUS_PORT:1234}
+      so11y:
+        prometheusExporterEnabled: ${SW_TELEMETRY_SO11Y_PROMETHEUS_ENABLED:true}
+        prometheusExporterHost: ${SW_TELEMETRY_PROMETHEUS_HOST:0.0.0.0}
+        prometheusExporterPort: ${SW_TELEMETRY_PROMETHEUS_PORT:1234} 
+        
+  
+  配置后启动 SkyWalking . 访问 127.0.0.1:1234 
+  
+  2、 Prometheus 配置
+  
+    在scrape_configs 下增加：
+    
+      - job_name: 'server'
+        static_configs:
+          - targets: ['localhost:1234']
+         
+ 
+  配置后启动 Prometheus，可以在 菜单的 Status → Targets 下看到服务信息。
+
+
+  3、Grafana
+    
+    1、在Grafana中只需要配置了Prometheus 数据源。
+    2、将参考文档中的json 导入到Dashboard中，即可看到SkyWalking 的指标数据。
+
+
+
+##### SkyWalking 和 Zipkin 对比
+
+    https://juejin.im/post/5a7a9e0af265da4e914b46f1#heading-23
+    
+
+|  类别   |  Zipkin  |  SkyWalking  |
+|  ----  |  ----  |  ----  |
+| 实现方式  | 拦截请求，发送（HTTP，mq）数据至zipkin服务 | java探针，字节码增强 |
+| 接入方式  | 基于linkerd或者sleuth方式，引入配置即可 | javaagent字节码 |
+| agent到collector的协议  | http,MQ | gRPC |
+| OpenTracing  | 支持 | 支持 |
+| 颗粒度  | 接口级 | 方法级 |
+| 全局调用统计  | 不支持 | 支持 |
+| traceid查询  | 支持 | 支持 |
+| 报警 | 不支持 | 支持 |
+| JVM监控 | 不支持 | 支持 |
+| 健壮度 | ☆☆ | ☆☆☆☆ |
+| 数据存储 | 	ES，mysql,Cassandra,内存 | ES，H2,mysql，influxdb |
 
 
