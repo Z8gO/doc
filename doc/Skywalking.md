@@ -426,3 +426,61 @@ org.apache.skywalking.oap.server.core.alarm.AlarmMessage :
 | 数据存储 | 	ES，mysql,Cassandra,内存 | ES，H2,mysql，influxdb |
 
 
+
+
+##### SkyWalking 仪表盘中的名词：
+    
+    所有的展示数据是页面右下角的时间区间作为条件进行统计。
+    Service Dashboard：
+        Global:
+            Global Heatmap： 系统全局耗时时间
+            Global Response Time Percentile : 全局响应时间。 数值解释： p50:A p75:B p90:C p95:D (ABCD均为数字单位ms) 表示：有50%的请求低于A ms.75%低于B ms 
+            Global Brief: 全局信息明细。
+            Global Top Slow Endpoint: 全局最慢的拦截点排名。
+        Service： （下拉框可选服务）
+            Service Avg ApdexScore: 服务平均体验度得分
+            Service Avg ResponseTime: 服务平均响应时间
+            Service Avg Throughput : 系统平均每分钟处理请求的数量（单位：cpm）
+            Service Avg SLA: 成功率。对于HTTP，表示响应为200的请求.(响应为200的请求数量除以总请求数量)
+            Service ApdexScore: 服务体验度得分走势    ApdexScore = ( (Satisfied request) + (Tolerating requests /2) ) / Total number of requests
+            Service ResponseTime: 服务响应时间走势
+            Service Throughput : 系统处理请求的数量走势
+            Service Response Time Percentile: 服务响应时间百分比走势。数值解释：p50:A p75:B p90:C p95:D (ABCD均为数字单位ms) 表示：有50%的请求低于A ms.75%低于B ms 
+            Service Slow Endpoint : 响应慢的拦截点。
+            Running ServiceInstance : 运行的服务实例
+        Endpoint ：
+            Endpoint Avg ResponseTime :  端点平均响应时间
+            Endpoint Avg Throughput : 端点平均每分钟处理请求的数量（单位：cpm）
+            Endpoint Avg SLA: 平均成功率。对于HTTP，表示响应为200的请求.(响应为200的请求数量除以总请求数量)
+            Endpoint ResponseTime：服务响应时间走势
+            Endpoint Throughput ：系统处理请求的数量走势
+            Endpoint SLA：成功率。对于HTTP，表示响应为200的请求.(响应为200的请求数量除以总请求数量)
+            Endpoint Response Time Percentile ：服务响应时间百分比走势。数值解释：p50:A p75:B p90:C p95:D (ABCD均为数字单位ms) 表示：有50%的请求低于A ms.75%低于B ms 
+            Dependency Map : 依赖关系图
+            Slow Traces: 响应时间长的调用链排序
+        Instance：
+            Instance Info :实例信息
+            Instance Avg ResponseTime ：实例平均响应时间
+            Instance Avg Throughput ：实例平均每分钟处理请求的数量（单位：cpm）
+            Instance Avg SLA ：实例平均响应成功率。对于HTTP，表示响应为200的请求.(响应为200的请求数量除以总请求数量)
+            Instance Throughput：实例处理请求的数量走势
+            Instance SLA：实例响应成功率。对于HTTP，表示响应为200的请求.(响应为200的请求数量除以总请求数量)
+            Instance ResponseTime：实例响应时间走势
+            JVM Heap (MB)：JVM堆大小
+            JVM Non-Heap (MB)：JVM非堆大小
+            JVM GC (ms)：GC时间
+            JVM GC Count：GC次数。 YoungGC Count、OldGC Count
+            JVM CPU (%)：JVM 占用CPU百分比
+            CLR CPU (%)：CLR 占用CPU百分比
+            CLR GC (Count)：GC次数。 clrGCGen0、clrGCGen1、clrGCGen2
+            CLR HeapMemory (MB)：CLR 堆内存
+    Database Dashboard
+        Database
+            Database Avg ResponseTime：DB平均响应时间
+            Database ResponseTime：DB响应时间走势图
+            Database Avg Throughput：DB平均每分钟处理请求的数量（单位：cpm）
+            Database Throughput：DB处理请求的数量（单位：cpm）走势图
+            Database SLA：DB处理请求成功率。对于HTTP，表示响应为200的请求.(响应为200的请求数量除以总请求数量)
+            Database Avg SLA：DB 处理请求的成功率。对于HTTP，表示响应为200的请求.(响应为200的请求数量除以总请求数量)
+            Database Response Time Percentile：DB响应时间百分比走势。数值解释：p50:A p75:B p90:C p95:D (ABCD均为数字单位ms) 表示：有50%的请求低于A ms.75%低于B ms 
+            Database TopN Records：DBTopN记录
