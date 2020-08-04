@@ -259,3 +259,51 @@ Service
           ingress:                           #外部负载均衡器
             ip: string                       #外部负载均衡器的Ip地址值
             hostname: string                 #外部负载均衡器的主机名
+            
+            
+            
+            
+            
+  k8s volumes 实践
+
+##### 配置详细：
+
+    https://blog.csdn.net/Juwenzhe_HEBUT/article/details/89478631
+    
+    1. yum install -y nfs-utils
+    2. mkdir -p /volumes/
+    3. vim /etc/exports
+       /volumes 192.168.0.0/16(rw,no_root_squash)
+
+   
+###### 配置文件注意点：
+
+     apiVersion: apps/v1
+     kind: Deployment
+     metadata:
+       name: nginx-vol-deploy-nfs
+       namespace: default
+     spec:
+       selector:
+         matchLabels:
+           app: nginx-vol-pod-nfs
+       replicas: 2
+       template:
+         metadata:
+           labels:
+             app: nginx-vol-pod-nfs
+         spec:
+           containers:
+           - name: nginx-containers-nfs
+             image: nginx
+             
+       #主要是下面这一块， mountPath对应容器内的路径
+             volumeMounts:
+             - name: html
+               mountPath: /usr/share/nginx/html/
+        # path 对应本地的路径
+           volumes:
+           - name: html
+             nfs:
+               path: /k8s/volumes
+               server: 10.
