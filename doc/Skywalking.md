@@ -426,9 +426,22 @@ org.apache.skywalking.oap.server.core.alarm.AlarmMessage :
 | 数据存储 | 	ES，mysql,Cassandra,内存 | ES，H2,mysql，influxdb |
 
 
-
+##### apdex
+    http://skywalking.apache.org/zh/blog/2020-07-26-apdex-and-skywalking.html
+    
+    
+    Satisfied request : SkyWalking默认 Satisfied request 的阈值(threshold)为:500ms。
+    
+    Tolerating requests ：默认为 Satisfied request 阈值的四倍 即为 2000ms
+    
+    ApdexScore = ( (Satisfied request) + (Tolerating requests /2) ) / Total number of requests
+    
+                       满意请求数 +  ( 容忍请求数 / 2 )
+    Apdex 得分  =  ——————————————————————————————————————————
+                                 总请求数
 
 ##### SkyWalking 仪表盘中的名词：
+    
     
     所有的展示数据是页面右下角的时间区间作为条件进行统计。
     Service Dashboard：
@@ -484,6 +497,31 @@ org.apache.skywalking.oap.server.core.alarm.AlarmMessage :
             Database Avg SLA：DB 处理请求的成功率。对于HTTP，表示响应为200的请求.(响应为200的请求数量除以总请求数量)
             Database Response Time Percentile：DB响应时间百分比走势。数值解释：p50:A p75:B p90:C p95:D (ABCD均为数字单位ms) 表示：有50%的请求低于A ms.75%低于B ms 
             Database TopN Records：DBTopN记录
+
+
+
+#### SkyWalking  性能调优：
+
+    copy From  https://cloud.tencent.com/developer/article/1563962
+    
+    
+    如果你正在使用SkyWalking作为分布式跟踪系统，而且是使用elasticsearch作为存储引擎，那么这篇文章中针对SkyWalking的优化你不妨看一下，说不定就有用了呢？
+    
+    OAP优化
+    skywalking写入ES的操作是使用了ES的批量写入接口，我们要做的是调整相关参数尽量降低ES索引的写入频率。参数调整主要是针对skywalking的配置文件application.yml，相关参数如下：
+    
+    storage:
+      elasticsearch:
+        bulkActions: ${SW_STORAGE_ES_BULK_ACTIONS:4000} # Execute the bulk every 2000 requests
+        bulkSize: ${SW_STORAGE_ES_BULK_SIZE:40} # flush the bulk every 20mb
+        flushInterval: ${SW_STORAGE_ES_FLUSH_INTERVAL:30} # flush the bulk every 10 seconds whatever the number of requests
+        concurrentRequests: ${SW_STORAGE_ES_CONCURRENT_REQUESTS:4} # the number of concurrent requests
+        metadataQueryMaxSize: ${SW_STORAGE_ES_QUERY_MAX_SIZE:8000}
+        
+    调整bulkActions默认2000次请求批量写入一次改到4000次；
+    bulkSize批量刷新从20M一次到40M一次；
+    flushInterval每10秒刷新一次堆改为每30秒刷新；
+    concurrentRequests查询的最大数量由5000改为8000。
 
 
 
