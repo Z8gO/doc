@@ -17,9 +17,9 @@ skywalking-quick-start:
     下载地址：
         ES: https://blog.csdn.net/weixin_37281289/article/details/101483434  
         linux: https://pan.baidu.com/s/1WfS9iWnayaNVQgbC29E13g  提取码：qijm   
-        windows: https://pan.baidu.com/s/1rwRAIkmssg98NX0xwY4iJA   提取码：bofl   
+        windows or mac OS: https://pan.baidu.com/s/1rwRAIkmssg98NX0xwY4iJA   提取码：bofl   
         SW: https://skywalking.apache.org/zh/downloads/
-        选6.6.0 下的Binary Distribution for ElasticSearch 7 (Windows)
+        选Mar. 22nd, 2020 7.0.0 下的 Binary Distribution for ElasticSearch 7下的 tar 
 
 ES中的配置（config\elasticsearch.yml）：
 
@@ -487,3 +487,9 @@ org.apache.skywalking.oap.server.core.alarm.AlarmMessage :
 
 
 
+##### SkyWalking 
+
+    在使用Sky Walking 8.1时候，UI界面有定制化指标数据显示的功能，但是指标名称需要自己去输入，而且还是有规则的。
+    所以指标名称需要有一个清单。在源码中可以通过oal文件来看有哪些指标：
+    
+    skywalking\oap-server\server-bootstrap\src\main\resources\oal
