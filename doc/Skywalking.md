@@ -16,7 +16,7 @@ skywalking-quick-start:
     
     下载地址：
         ES: https://blog.csdn.net/weixin_37281289/article/details/101483434  
-        linux or mac OS: https://pan.baidu.com/s/1WfS9iWnayaNVQgbC29E13g  提取码：qijm  mac  
+        linux or mac OS: https://pan.baidu.com/s/1WfS9iWnayaNVQgbC29E13g  提取码：qijm
         windows: https://pan.baidu.com/s/1rwRAIkmssg98NX0xwY4iJA   提取码：bofl   
         SW: https://skywalking.apache.org/zh/downloads/
         选 Mar. 22nd, 2020 7.0.0 下的 Binary Distribution for ElasticSearch 7下的 tar 
