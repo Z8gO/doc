@@ -16,10 +16,10 @@ skywalking-quick-start:
     
     下载地址：
         ES: https://blog.csdn.net/weixin_37281289/article/details/101483434  
-        linux or mac OS: https://pan.baidu.com/s/1WfS9iWnayaNVQgbC29E13g  提取码：qijm   
+        linux: https://pan.baidu.com/s/1WfS9iWnayaNVQgbC29E13g  提取码：qijm   
         windows: https://pan.baidu.com/s/1rwRAIkmssg98NX0xwY4iJA   提取码：bofl   
         SW: https://skywalking.apache.org/zh/downloads/
-        选Mar. 22nd, 2020 7.0.0 下的 Binary Distribution for ElasticSearch 7下的 tar 
+        选6.6.0 下的Binary Distribution for ElasticSearch 7 (Windows)
 
 ES中的配置（config\elasticsearch.yml）：
 
@@ -426,22 +426,9 @@ org.apache.skywalking.oap.server.core.alarm.AlarmMessage :
 | 数据存储 | 	ES，mysql,Cassandra,内存 | ES，H2,mysql，influxdb |
 
 
-##### apdex
-    http://skywalking.apache.org/zh/blog/2020-07-26-apdex-and-skywalking.html
-    
-    
-    Satisfied request : SkyWalking默认 Satisfied request 的阈值(threshold)为:500ms。
-    
-    Tolerating requests ：默认为 Satisfied request 阈值的四倍 即为 2000ms
-    
-    ApdexScore = ( (Satisfied request) + (Tolerating requests /2) ) / Total number of requests
-    
-                       满意请求数 +  ( 容忍请求数 / 2 )
-    Apdex 得分  =  ——————————————————————————————————————————
-                                 总请求数
+
 
 ##### SkyWalking 仪表盘中的名词：
-    
     
     所有的展示数据是页面右下角的时间区间作为条件进行统计。
     Service Dashboard：
@@ -500,35 +487,3 @@ org.apache.skywalking.oap.server.core.alarm.AlarmMessage :
 
 
 
-#### SkyWalking  性能调优：
-
-    copy From  https://cloud.tencent.com/developer/article/1563962
-    
-        
-    如果你正在使用SkyWalking作为分布式跟踪系统，而且是使用elasticsearch作为存储引擎，那么这篇文章中针对SkyWalking的优化你不妨看一下，说不定就有用了呢？
-    
-    OAP优化
-    skywalking写入ES的操作是使用了ES的批量写入接口，我们要做的是调整相关参数尽量降低ES索引的写入频率。参数调整主要是针对skywalking的配置文件application.yml，相关参数如下：
-    
-    storage:
-      elasticsearch:
-        bulkActions: ${SW_STORAGE_ES_BULK_ACTIONS:4000} # Execute the bulk every 2000 requests
-        bulkSize: ${SW_STORAGE_ES_BULK_SIZE:40} # flush the bulk every 20mb
-        flushInterval: ${SW_STORAGE_ES_FLUSH_INTERVAL:30} # flush the bulk every 10 seconds whatever the number of requests
-        concurrentRequests: ${SW_STORAGE_ES_CONCURRENT_REQUESTS:4} # the number of concurrent requests
-        metadataQueryMaxSize: ${SW_STORAGE_ES_QUERY_MAX_SIZE:8000}
-        
-    调整bulkActions默认2000次请求批量写入一次改到4000次；
-    bulkSize批量刷新从20M一次到40M一次；
-    flushInterval每10秒刷新一次堆改为每30秒刷新；
-    concurrentRequests查询的最大数量由5000改为8000。
-
-
-### Skywalking 中的所有指标:
-    
-    在Skywalking 8.1的ui界面需要进行定制化展示一些指标数据，但是指标需要自己输入。这个的体验是有些不好的。
-    在源码中找到了所有的指标信息：
-    skywalking\oap-server\server-bootstrap\src\main\resources\oal
-    
-    
-    
