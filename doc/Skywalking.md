@@ -12,14 +12,14 @@ skywalking-quick-start:
 
 
 ####  环境搭建：
-    win10  apache-skywalking-apm-es7-6.6.0 + elasticsearch-7.3.2
+    win10  apache-skywalking-apm-es7-7.0.0 + elasticsearch-7.3.2
     
     下载地址：
         ES: https://blog.csdn.net/weixin_37281289/article/details/101483434  
         linux: https://pan.baidu.com/s/1WfS9iWnayaNVQgbC29E13g  提取码：qijm   
         windows: https://pan.baidu.com/s/1rwRAIkmssg98NX0xwY4iJA   提取码：bofl   
         SW: https://skywalking.apache.org/zh/downloads/
-        选6.6.0 下的Binary Distribution for ElasticSearch 7 (Windows)
+        选 Mar. 22nd, 2020 7.0.0 下的 Binary Distribution for ElasticSearch 7下的 tar 
 
 ES中的配置（config\elasticsearch.yml）：
 
