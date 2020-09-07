@@ -3,7 +3,12 @@
 ###### SkyWalking: an APM(application performance monitor) system, especially designed for microservices, cloud native and container-based (Docker, Kubernetes, Mesos) architectures.
 ###### SkyWalking: 一个开源的可观测平台, 用于从服务和云原生基础设施收集, 分析, 聚合及可视化数据。SkyWalking 提供了一种简便的方式来清晰地观测分布式系统, 甚至横跨多个云平台。SkyWalking 更是一个现代化的应用程序性能监控(Application Performance Monitoring)系统, 尤其专为云原生、基于容器的分布式系统设计
 
-skywalking-quick-start:  
+
+
+OpenTracing 文档中文翻译版
+> https://wu-sheng.gitbooks.io/opentracing-io/content/
+
+SkyWalking-quick-start:  
 
 >  https://skywalking.apache.org/zh/blog/2020-04-19-skywalking-quick-start.html
 
@@ -264,7 +269,9 @@ org.apache.skywalking.oap.server.core.alarm.AlarmMessage :
     中文文档：
     https://skyapm.github.io/document-cn-translation-of-skywalking/zh/8.0.0/guides/Java-Plugin-Development-Guide.html  
 
-    
+
+
+
 
 ######  源码学习总结：
     注意点：
@@ -286,6 +293,7 @@ org.apache.skywalking.oap.server.core.alarm.AlarmMessage :
     进行 manager.init(applicationConfiguration);  
     
     以下为init方法的源码：
+    
     public void init(
         ApplicationConfiguration applicationConfiguration) throws ModuleNotFoundException, ProviderNotFoundException, ServiceNotProvidedException, CycleDependencyException, ModuleConfigException, ModuleStartException {
         String[] moduleNames = applicationConfiguration.moduleList();
@@ -327,7 +335,6 @@ org.apache.skywalking.oap.server.core.alarm.AlarmMessage :
         bootstrapFlow.start(this);
         bootstrapFlow.notifyAfterCompleted();
     }
-    
         
         bootstrapFlow.start(this);
         源码：
@@ -373,6 +380,7 @@ org.apache.skywalking.oap.server.core.alarm.AlarmMessage :
     
     具体配置如下：
  
+```yaml
     telemetry:
       selector: ${SW_TELEMETRY:so11y}
       none:
@@ -383,7 +391,7 @@ org.apache.skywalking.oap.server.core.alarm.AlarmMessage :
         prometheusExporterEnabled: ${SW_TELEMETRY_SO11Y_PROMETHEUS_ENABLED:true}
         prometheusExporterHost: ${SW_TELEMETRY_PROMETHEUS_HOST:0.0.0.0}
         prometheusExporterPort: ${SW_TELEMETRY_PROMETHEUS_PORT:1234} 
-        
+```
   
   配置后启动 SkyWalking . 访问 127.0.0.1:1234 
   
@@ -485,11 +493,43 @@ org.apache.skywalking.oap.server.core.alarm.AlarmMessage :
             Database Response Time Percentile：DB响应时间百分比走势。数值解释：p50:A p75:B p90:C p95:D (ABCD均为数字单位ms) 表示：有50%的请求低于A ms.75%低于B ms 
             Database TopN Records：DBTopN记录
 
+#### SkyWalking 性能优化
+
+参考： https://cloud.tencent.com/developer/article/1563962
+
+如果你正在使用SkyWalking作为分布式跟踪系统，而且是使用elasticsearch作为存储引擎，那么这篇文章中针对SkyWalking的优化你不妨看一下，说不定就有用了呢？
+ 
+>Skywalking写入ES的操作是使用了ES的批量写入接口，我们要做的是调整相关参数尽量降低ES索引的写入频率。参数调整主要是针对skywalking的配置文件application.yml，相关参数如下：    
+
+```yaml
+storage:
+  elasticsearch:
+    bulkActions: ${SW_STORAGE_ES_BULK_ACTIONS:4000} # Execute the bulk every 2000 requests
+    bulkSize: ${SW_STORAGE_ES_BULK_SIZE:40} # flush the bulk every 20mb
+    flushInterval: ${SW_STORAGE_ES_FLUSH_INTERVAL:30} # flush the bulk every 10 seconds whatever the number of requests
+    concurrentRequests: ${SW_STORAGE_ES_CONCURRENT_REQUESTS:4} # the number of concurrent requests
+    metadataQueryMaxSize: ${SW_STORAGE_ES_QUERY_MAX_SIZE:8000}
+```
+
+>调整bulkActions默认2000次请求批量写入一次改到4000次；  
+ bulkSize批量刷新从20M一次到40M一次；  
+ flushInterval每10秒刷新一次堆改为每30秒刷新；  
+ concurrentRequests查询的最大数量由5000改为8000。  
 
 
-##### SkyWalking 
+##### SkyWalking 8.1指标名称
 
-    在使用Sky Walking 8.1时候，UI界面有定制化指标数据显示的功能，但是指标名称需要自己去输入，而且还是有规则的。
-    所以指标名称需要有一个清单。在源码中可以通过oal文件来看有哪些指标：
-    
+*  在使用SkyWalking 8.1时候，UI界面有定制化指标数据显示的功能，但是指标名称需要自己去输入，而且还是有规则的。
+所以指标名称需要有一个清单。在源码中可以通过`oal`文件来看有哪些指标：
+
+
     skywalking\oap-server\server-bootstrap\src\main\resources\oal
+    
+    
+#####  SkyWalking 8.1 追踪协议
+
+    https://github.com/apache/skywalking-data-collect-protocol/blob/master/language-agent/Tracing.proto
+
+#####  支持自定义增强
+
+    https://skyapm.github.io/document-cn-translation-of-skywalking/zh/8.0.0/setup/service-agent/java-agent/Customize-enhance-trace.html

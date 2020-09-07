@@ -9,11 +9,12 @@ github:  https://github.com/kswapd/spring-cloud-arch.git
 
 ######  基本概念：
 >服务发现——Netflix Eureka  
-客服端负载均衡——Netflix Ribbon  
+负载均衡——Netflix Ribbon  
 断路器——Netflix Hystrix  
-服务调用--Feign  
+服务调用——Feign  
 服务网关——Netflix Zuul  
 分布式配置——Spring Cloud Config  
+网关——SpringCloud getway
 
 
 
@@ -23,8 +24,7 @@ github:  https://github.com/kswapd/spring-cloud-arch.git
 
 ####  Eureka Server
 ######  配置文件
->  
- server.port=1111  
+>server.port=1111  
  eureka.instance.hostname=localhost   
  eureka.client.register-with-eureka=false  
  eureka.client.fetch-registry=false  
@@ -44,9 +44,9 @@ github:  https://github.com/kswapd/spring-cloud-arch.git
     @SpringBootApplication
     @EnableEurekaServer
     public class Application {
-    	public static void main(String[] args) {
-		  SpringApplication.run(Application.class, args);
-    	}
+      public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+      }
     }
 
   
@@ -135,7 +135,8 @@ DELETE: delete
 对RestTemplate使用 @LoadBalanced 注解后，如果本服务有多个实例向注册中心注册成功，服务消费者不会去关注服务有多少个实例，只关注服务提供者向注册中心注册的服务名称，每次请求会以轮询访问的方式去调用服务接口以到达负载均衡的作用。 
 
 <br/>
-####搭建高可用注册中心
+
+#### 搭建高可用注册中心
 
 SpringBoot项目中默认是使用application.properties，  
 在原Eureka Server的项目中添加两个配置文件application-peer1.properties和application-peer2.properties
@@ -231,7 +232,7 @@ java -jar eureka-server-0.0.1-SNAPSHOT.jar --spring.profiles.active=peer2
 #####  修改服务消费者启动入口类
 引入hystrix之后，我们需要在入口类上通过@EnableCircuitBreaker开启断路器功能，如下:
 
-
+```java
     @EnableCircuitBreaker
     @SpringBootApplication
     @EnableDiscoveryClient
@@ -246,6 +247,7 @@ java -jar eureka-server-0.0.1-SNAPSHOT.jar --spring.profiles.active=peer2
             return new RestTemplate();
         }
     }
+```
 
 也可以使用一个名为@SpringCloudApplication 的注解代替这三个注解，@SpringCloudApplication 注解的定义如下：
 
@@ -351,7 +353,8 @@ https://mp.weixin.qq.com/s/r05WF7WP3Qd7As_fTBkxaw
 
 
 <div STYLE="page-break-after: always;"></div>
-##Feign
+
+##  Feign
 Declarative REST Client: Feign（一个声明式web 服务调用服务）。  
 Feign整合了Ribbon和Hystrix。  
 
@@ -442,8 +445,9 @@ application.properties文件中的配置可以分为两部分，一部分是Zuul
 >>server.port=2006  
 
 >路由规则配置，api-a是路由的名字，一组path和serviceId映射关系的路由名要相同。
->>zuul.routes.api-a.path=/api-a/\*\*  
-  zuul.routes.api-a.serviceId=feign-consumer
+ 
+    zuul.routes.api-a.path=/api-a/**  
+    zuul.routes.api-a.serviceId=feign-consumer
 
 >API网关也将作为一个服务注册到eureka-server上
 >>eureka.client.service-url.defaultZone=http://localhost:1111/eureka/
@@ -452,10 +456,11 @@ application.properties文件中的配置可以分为两部分，一部分是Zuul
 
 <br/>
 以上配置说明：
+
 [comment]:\*是为了转译配置为zuul.routes.api-a.path=/api-a/** 
 
->如果请求 http://localhost:2006/api-a/hello1 接口则相当于请求 http://localhost:2005/hello1 (这里feign-consumer的地址为http://localhost:2005 )，在路由规则中配置的api-a是路由的名字，可以任意定义，但是一组path和serviceId映射关系的路由名要相同。  
-配置细节： zuul.routes.api-a.path=/api-a/\*\*  
+    如果请求 http://localhost:2006/api-a/hello1 接口则相当于请求 http://localhost:2005/hello1 (这里feign-consumer的地址为http://localhost:2005 )，在路由规则中配置的api-a是路由的名字，可以任意定义，但是一组path和serviceId映射关系的路由名要相同。  
+    配置细节： zuul.routes.api-a.path=/api-a/**  
 
 
 >>\*\*（两个星号）表示匹配的字符长度不限制，如匹配/feign-consumer/aaa,feign-consumer/bbb,/feign-consumer/ccc等，也可以匹配/feign-consumer/a/b/c  
@@ -568,10 +573,10 @@ Demo如下：
 流程：
 1、将配置文件上传至版本管理工具或者简单的文件访问服务器，当然最好是版本管理工具服务器。配置文件可以根据不同的环境上传多种文件。
    
-	    默认配置：helloservice.properties  
-    	测试环境：helloservice-test.properties   
-    	开发环境：helloservice-dev.properties  
-    	生产环境：helloservice-prod.properties
+    默认配置：helloservice.properties  
+    测试环境：helloservice-test.properties   
+    开发环境：helloservice-dev.properties  
+    生产环境：helloservice-prod.properties
 
 2、在项目中配置服务器地址、管理文件路径、用户名、密码相关。  
 3、启动项目，可以访问文件信息。  访问方式   ip:端口/{application}/{profile}/{label}。其中application表示配置的服务的名字（例如 hello-service），profile表示环境，我们有dev、test、prod还有默认，label表示分支，默认我们都是放在master分支上
@@ -609,10 +614,26 @@ spring.cloud.config.discovery.enabled=true
 spring.cloud.config.discovery.service-id=config-server  
 spring.cloud.config.fail-fast=true  
 
+##### Spring Cloud gateWay 配置
 
-***   
-至此Spring Cloud 五大组件的入门级别学习完成
-***
+    spring:
+      application:
+        name: gateway-service
+      cloud:
+        gateway:
+          routes:
+            - id: data-service1  #请求 http://localhost:8100/data-service1/test会转发到data-producer服务
+              uri: lb://data-producer  #在服务注册中心找服务名为 data-producer的服务
+              predicates:
+                - Path=/data-service1/*  #设置路由断言,代理servicerId为data-service1的/ data-service1 /路径
+              filters:
+                - StripPrefix=1
+            - id: data-service2  # 请求 http://localhost:8100/data-service2/test转发到 http://localhost:8080/test
+              uri: http://localhost:8080
+              predicates:
+                - Path=/data-service2/*
+              filters:
+                - StripPrefix=1  #前缀， 在当前路径匹配中表示去掉第一个前缀 /data-service2
 
 一些有用的思想：
 
