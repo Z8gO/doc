@@ -49,6 +49,23 @@ Spring Cloud 集成：
       spring.cloud.nacos.discovery.namespace= ec246752-fdc5-4203-9e25-736b38af2458
 
 
+在spring cloud项目中同时使用Nacos 和eureka时，关闭 Nacos:
+
+    spring:
+      autoconfigure:
+        exclude:
+          - org.springframework.cloud.alibaba.nacos.NacosDiscoveryAutoConfiguration
+          - org.springframework.cloud.alibaba.nacos.endpoint.NacosDiscoveryEndpointAutoConfiguration
+      cloud:
+        nacos:
+          discovery:
+            register-enabled: false
+            enabled: false
+            server-addr: 10.7.19.116:30789
+    备注： 如果要关闭 eureka 则需要排除的类是 org.springframework.cloud.netflix.eureka.EurekaClientAutoConfiguration
+
+
+
 
 Nacos 使用：
 
