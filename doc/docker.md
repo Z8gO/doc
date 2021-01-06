@@ -20,3 +20,8 @@
 >3、 EXPOSE 31027 服务使用容器的端口  
 >4、 执行命令
 
+
+
+
+##### harbor 证书导入docker
+  在 /etc/docker/certs.d

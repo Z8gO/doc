@@ -218,7 +218,7 @@ org.apache.skywalking.oap.server.core.alarm.AlarmMessage :
 
 
 
-如果skywalking是初次连接elasticsearch服务，启动会比较慢,要创建表。  
+如果skywalking是初次连接elasticsearch服务，启动会比较慢,要创建索引。  
 因为skywalking需要向es服务创建很多的index。所以在未创建完成之前，访问这个页面会是空白的。此时可以通过查看日志来判断启动是否完成，日志路径：logs/skywalking-oap-server.log。
 
 
