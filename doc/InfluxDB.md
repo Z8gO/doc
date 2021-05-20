@@ -1,4 +1,3 @@
-######  张煌 zhanghuang@dcits.com
 
 ##  InfluxDB 学习笔记
 ####  时序数据库
