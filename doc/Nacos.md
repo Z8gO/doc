@@ -4,9 +4,6 @@
 国产的注册中心、分布式配置管理：Nacos，来自阿里巴巴
 
 
-######  链接: https://pan.baidu.com/s/1yTvTL3M9J--n-iHhog7fzg  
-######  提取码: k5bb
-
 <br/>
 
 >解压后运行：bin 目录下的  startup.cmd  OR  startup.sh  
